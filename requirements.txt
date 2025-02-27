@@ -1,3 +1,5 @@
  opencv-python
  pygame
  mediapipe
+ streamlit
+ streamlit-webrtc
