@@ -2,19 +2,17 @@ import streamlit as st
 import cv2
 import mediapipe as mp
 from config import SOUND_FILES_A, SOUND_FILES_B
-from utils import initialize_pygame, detect_gesture_and_play_sound, display_mode_text
+from utils import detect_gesture_and_play_sound, display_mode_text
 from hand_tracker import HandTracker
-from sound_manager import SoundManager
+from sound_manager_streamlit import SoundManager
 from electro_circle import ElectroCircle
 from rectangle_manager import RectangleManager
 import numpy as np
 from streamlit_webrtc import VideoProcessorBase, webrtc_streamer
 
 
-class GuzhengSimulator(VideoProcessorBase):
+class GuZen(VideoProcessorBase):
     def __init__(self):
-        # Initialize pygame before loading sounds
-        initialize_pygame()
 
         # Initialize hand tracker, sound manager, and electro circle
         self.hand_tracker = HandTracker()
@@ -114,25 +112,12 @@ class GuzhengSimulator(VideoProcessorBase):
         return fingertip_detected
 
 
-class VideoProcessor(VideoProcessorBase):
-    def recv(self, frame):
-        # Convert the frame to an OpenCV-compatible format
-        img = frame.to_ndarray(format="bgr24")
-
-        # Flip the frame horizontally (mirror effect)
-        img = cv2.flip(img, 1)
-
-        # Convert from BGR to RGB for proper display
-        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        return rgb_img
-
-
 if __name__ == "__main__":
     st.title("Continuous Video Stream Processing with streamlit-webrtc")
 
     webrtc_streamer(
         key="example",
-        video_processor_factory=GuzhengSimulator,
+        video_processor_factory=GuZen,
         media_stream_constraints={"video": True, "audio": False}
     )
 
