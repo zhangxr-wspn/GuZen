@@ -194,7 +194,6 @@ function onResults(results) {
   const rects = getRectanglesMode1(canvasElement.width, canvasElement.height);
   drawRectanglesAndStrings(canvasCtx, rects, STRING_COLORS, SOUND_FILES_A);
 
-  // Check if the index finger tip (landmark 8) is inside any rectangle.
   if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
     const tip = results.multiHandLandmarks[0][8]; // Index finger tip.
     const tipX = tip.x * canvasElement.width;
@@ -205,7 +204,9 @@ function onResults(results) {
           tipY >= rect.y && tipY <= rect.y + rect.h) {
         const currentTime = Date.now();
         if (currentTime - lastPlayedTime[i] > SOUND_COOLDOWN * 1000) {
-          audioElements[i].play();
+          // Clone the audio element to allow immediate play.
+          const soundClone = audioElements[i].cloneNode();
+          soundClone.play();
           lastPlayedTime[i] = currentTime;
         }
       }
@@ -243,7 +244,7 @@ hands.onResults(onResults);
 new controls
   .ControlPanel(controlsElement, {
     selfieMode: true,
-    maxNumHands: 2,
+    maxNumHands: 1,
     modelComplexity: 1,
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
